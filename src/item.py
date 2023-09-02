@@ -1,6 +1,7 @@
 import csv
 import os
 
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -12,11 +13,16 @@ class Item:
     @classmethod
     def instantiate_from_csv(cls):
         """класс-метод, инициализирующий экземпляры класса Item данными из файла src/items.csv"""
-        with open(cls.CSV_PATH, encoding='cp1251') as file:
-            reader = csv.DictReader(file)
+        with open(cls.CSV_PATH, encoding='cp1251') as csvfile:
+            reader = csv.DictReader(csvfile)
             cls.all.clear()
             for line in reader:
                 item = cls(line['name'], float(line['price']), int(line['quantity']))
+
+    @staticmethod
+    def string_to_number(string):
+        """статический метод, возвращающий число из числа-строки"""
+        return int(float(string))
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -26,9 +32,18 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
-        self.name = name
-        self.price = price
         self.quantity = quantity
+        self.price = price
+        self.__name = name
+        self.all.append(self)
+
+    def __repr__(self):
+        """отображение информации об объекте класса в режиме отладки"""
+        return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        """отображение информации об объекте класса для пользователей"""
+        return f"{self.__name}"
 
     @property
     def name(self):
@@ -42,12 +57,6 @@ class Item:
             self.__name = name[0:10]
         else:
             self.__name = name
-
-
-    @staticmethod
-    def string_to_number(string):
-        """статический метод, возвращающий число из числа-строки"""
-        return int(float(string))
 
     def calculate_total_price(self) -> float:
         """
