@@ -13,8 +13,8 @@ class Item:
     @classmethod
     def instantiate_from_csv(cls):
         """класс-метод, инициализирующий экземпляры класса Item данными из файла src/items.csv"""
-        with open(cls.CSV_PATH, encoding='cp1251') as csvfile:
-            reader = csv.DictReader(csvfile)
+        with open(cls.CSV_PATH, encoding='cp1251') as file:
+            reader = csv.DictReader(file)
             cls.all.clear()
             for line in reader:
                 item = cls(line['name'], float(line['price']), int(line['quantity']))
@@ -44,6 +44,12 @@ class Item:
     def __str__(self):
         """отображение информации об объекте класса для пользователей"""
         return f"{self.__name}"
+
+    def __add__(self, other):
+        """складываем только экземпляры класса Item и его дочерних классов"""
+        if not issubclass(other.__class__, self.__class__):
+            raise ValueError('Складывать можно только объекты Item и дочерние от них.')
+        return self.quantity + other.quantity
 
     @property
     def name(self):
